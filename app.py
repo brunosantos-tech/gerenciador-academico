@@ -1,6 +1,7 @@
 
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import date, timedelta
 
 app = Flask(__name__)
 
@@ -47,13 +48,52 @@ def inicio():
 
         return redirect(url_for("inicio"))
 
+    
+    from datetime import date, timedelta
+
     with conectar_banco() as conexao:
         atividades = conexao.execute("""
             SELECT * FROM atividades
             ORDER BY prazo ASC, id DESC
         """).fetchall()
 
-    return render_template("index.html", atividades=atividades)
+        total_atividades = conexao.execute("""
+            SELECT COUNT(*) FROM atividades
+        """).fetchone()[0]
+
+        pendentes = conexao.execute("""
+            SELECT COUNT(*) FROM atividades
+            WHERE concluida = 0
+        """).fetchone()[0]
+
+        concluidas = conexao.execute("""
+            SELECT COUNT(*) FROM atividades
+            WHERE concluida = 1
+        """).fetchone()[0]
+
+        atrasadas = conexao.execute("""
+            SELECT COUNT(*) FROM atividades
+            WHERE concluida = 0 AND prazo < ?
+        """, (date.today().isoformat(),)).fetchone()[0]
+
+        data_limite = (date.today() + timedelta(days=7)).isoformat()
+
+        proximas = conexao.execute("""
+            SELECT COUNT(*) FROM atividades
+            WHERE concluida = 0
+                AND prazo >= ?
+                AND prazo <= ?
+        """, (date.today().isoformat(), data_limite)).fetchone()[0]
+
+    return render_template(
+        "index.html",
+        atividades=atividades,
+        total_atividades=total_atividades,
+        pendentes=pendentes,
+        concluidas=concluidas,
+        atrasadas=atrasadas,
+        proximas=proximas
+    )
 
 
 @app.route("/concluir/<int:id>", methods=["POST"])

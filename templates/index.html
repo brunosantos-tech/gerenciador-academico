@@ -19,6 +19,39 @@
             <p>Cadastre suas atividades e acompanhe os prazos da faculdade.</p>
         </section>
 
+
+        <section class="painel">
+            <h2>Resumo acadêmico</h2>
+
+            <div class="indicadores">
+                <article class="cartao-indicador">
+                    <span class="rotulo">Total de atividades</span>
+                    <strong>{{ total_atividades }}</strong>
+                </article>
+
+                <article class="cartao-indicador">
+                    <span class="rotulo">Pendentes</span>
+                    <strong>{{ pendentes }}</strong>
+                </article>
+
+                <article class="cartao-indicador">
+                    <span class="rotulo">Concluídas</span>
+                    <strong>{{ concluidas }}</strong>
+                </article>
+
+                <article class="cartao-indicador cartao-atrasadas">
+                    <span class="rotulo">Atrasadas</span>
+                    <strong>{{ atrasadas }}</strong>
+                </article>
+
+                <article class="cartao-indicador cartao-proximas">
+                    <span class="rotulo">Próximos 7 dias</span>
+                    <strong>{{ proximas }}</strong>
+                </article>
+            </div>
+        </section>
+
+        
         <section class="formulario">
             <h2>Nova atividade</h2>
 

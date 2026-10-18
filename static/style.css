@@ -148,3 +148,46 @@ button:hover {
 .atividade.concluida {
     opacity: 0.75;
 }
+
+
+.painel {
+    margin-bottom: 24px;
+}
+
+.painel h2 {
+    margin-top: 0;
+}
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.cartao-indicador {
+    background-color: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #245ca6;
+}
+
+.rotulo {
+    display: block;
+    margin-bottom: 12px;
+    color: #687386;
+    font-size: 14px;
+}
+
+.cartao-indicador strong {
+    font-size: 30px;
+    color: #183153;
+}
+
+.cartao-atrasadas {
+    border-left-color: #c0392b;
+}
+
+.cartao-proximas {
+    border-left-color: #d69e2e;
+}
