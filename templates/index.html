@@ -15,25 +15,77 @@
 
     <main>
         <section class="boas-vindas">
-            <h2>Bem-vindo!</h2>
-            <p>Este será o seu espaço para acompanhar os prazos da faculdade.</p>
+            <h2>Minha vida acadêmica</h2>
+            <p>Cadastre suas atividades e acompanhe os prazos da faculdade.</p>
         </section>
 
-        <section class="resumo">
-            <article class="cartao">
-                <h3>Atividades pendentes</h3>
-                <p>Em breve</p>
-            </article>
+        <section class="formulario">
+            <h2>Nova atividade</h2>
 
-            <article class="cartao">
-                <h3>Próximas provas</h3>
-                <p>Em breve</p>
-            </article>
+            <form method="POST" action="/">
+                <label for="titulo">Nome da atividade</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    placeholder="Ex.: Trabalho de Teologia Bíblica"
+                    required
+                >
 
-            <article class="cartao">
-                <h3>Trabalhos a entregar</h3>
-                <p>Em breve</p>
-            </article>
+                <label for="disciplina">Disciplina</label>
+                <input
+                    type="text"
+                    id="disciplina"
+                    name="disciplina"
+                    placeholder="Ex.: Teologia Bíblica"
+                    required
+                >
+
+                <label for="tipo">Tipo de atividade</label>
+                <select id="tipo" name="tipo" required>
+                    <option value="">Selecione</option>
+                    <option value="Trabalho">Trabalho</option>
+                    <option value="Prova">Prova</option>
+                    <option value="Seminário">Seminário</option>
+                    <option value="Leitura">Leitura</option>
+                    <option value="Outra">Outra atividade</option>
+                </select>
+
+                <label for="prazo">Data de entrega ou realização</label>
+                <input type="date" id="prazo" name="prazo" required>
+
+                <label for="prioridade">Prioridade</label>
+                <select id="prioridade" name="prioridade" required>
+                    <option value="Baixa">Baixa</option>
+                    <option value="Média" selected>Média</option>
+                    <option value="Alta">Alta</option>
+                </select>
+
+                <button type="submit">Cadastrar atividade</button>
+            </form>
+        </section>
+
+        <section class="lista-atividades">
+            <h2>Minhas atividades</h2>
+
+            {% if atividades %}
+                {% for atividade in atividades %}
+                    <article class="atividade">
+                        <div>
+                            <h3>{{ atividade["titulo"] }}</h3>
+                            <p>Disciplina: {{ atividade["disciplina"] }}</p>
+                            <p>Tipo: {{ atividade["tipo"] }}</p>
+                            <p>Prazo: {{ atividade["prazo"] }}</p>
+                        </div>
+
+                        <span class="prioridade">
+                            Prioridade: {{ atividade["prioridade"] }}
+                        </span>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <p>Nenhuma atividade cadastrada. Comece adicionando a primeira!</p>
+            {% endif %}
         </section>
     </main>
 </body>
