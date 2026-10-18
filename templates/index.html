@@ -98,52 +98,110 @@
             </form>
         </section>
 
+        
         <section class="lista-atividades">
             <h2>Minhas atividades</h2>
 
+            <form method="GET" action="/" class="filtros">
+                <div>
+                    <label for="situacao">Situação</label>
+                    <select id="situacao" name="situacao">
+                        <option value="todas"
+                            {% if situacao == "todas" %}selected{% endif %}>
+                            Todas
+                        </option>
+                        <option value="pendentes"
+                            {% if situacao == "pendentes" %}selected{% endif %}>
+                            Pendentes
+                        </option>
+                        <option value="concluidas"
+                            {% if situacao == "concluidas" %}selected{% endif %}>
+                            Concluídas
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="disciplina">Disciplina</label>
+                    <select id="disciplina" name="disciplina">
+                        <option value="">Todas as disciplinas</option>
+
+                        {% for item in disciplinas %}
+                            <option value="{{ item['disciplina'] }}"
+                                {% if disciplina_filtro == item['disciplina'] %}selected{% endif %}>
+                                {{ item["disciplina"] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="ordenacao">Ordenar por</label>
+                    <select id="ordenacao" name="ordenacao">
+                        <option value="prazo"
+                            {% if ordenacao == "prazo" %}selected{% endif %}>
+                            Prazo mais próximo
+                        </option>
+                        <option value="prioridade"
+                            {% if ordenacao == "prioridade" %}selected{% endif %}>
+                            Maior prioridade
+                        </option>
+                        <option value="recentes"
+                            {% if ordenacao == "recentes" %}selected{% endif %}>
+                            Mais recentes
+                        </option>
+                    </select>
+                </div>
+
+                <div class="botoes-filtro">
+                    <button type="submit">Filtrar atividades</button>
+                    <a href="{{ url_for('inicio') }}" class="botao-limpar">
+                        Limpar filtros
+                    </a>
+                </div>
+            </form>
+
             {% if atividades %}
                 {% for atividade in atividades %}
-                    
-            <article class="atividade {% if atividade['concluida'] %}concluida{% endif %}">
-                <div class="detalhes-atividade">
-                    <h3>{{ atividade["titulo"] }}</h3>
-                    <p>Disciplina: {{ atividade["disciplina"] }}</p>
-                    <p>Tipo: {{ atividade["tipo"] }}</p>
-                    <p>Prazo: {{ atividade["prazo"] }}</p>
+                    <article class="atividade {% if atividade['concluida'] %}concluida{% endif %}">
+                        <div class="detalhes-atividade">
+                            <h3>{{ atividade["titulo"] }}</h3>
+                            <p>Disciplina: {{ atividade["disciplina"] }}</p>
+                            <p>Tipo: {{ atividade["tipo"] }}</p>
+                            <p>Prazo: {{ atividade["prazo"] }}</p>
 
-                    <span class="prioridade">
-                        Prioridade: {{ atividade["prioridade"] }}
-                    </span>
-                </div>
+                            <span class="prioridade">
+                                Prioridade: {{ atividade["prioridade"] }}
+                            </span>
+                        </div>
 
-                <div class="acoes-atividade">
-                    <form method="POST" action="{{ url_for('concluir', id=atividade['id']) }}">
-                        <button type="submit" class="botao-concluir">
-                            {% if atividade["concluida"] %}
-                                Reabrir atividade
-                            {% else %}
-                                Concluir atividade
-                            {% endif %}
-                        </button>
-                    </form>
+                        <div class="acoes-atividade">
+                            <form method="POST"
+                                action="{{ url_for('concluir', id=atividade['id']) }}">
+                                <button type="submit" class="botao-concluir">
+                                    {% if atividade["concluida"] %}
+                                        Reabrir atividade
+                                    {% else %}
+                                        Concluir atividade
+                                    {% endif %}
+                                </button>
+                            </form>
 
-                    <form
-                        method="POST"
-                        action="{{ url_for('excluir', id=atividade['id']) }}"
-                        onsubmit="return confirm('Tem certeza que deseja excluir esta atividade?');"
-                    >
-                        <button type="submit" class="botao-excluir">
-                            Excluir
-                        </button>
-                    </form>
-                </div>
-            </article>
-
+                            <form method="POST"
+                                action="{{ url_for('excluir', id=atividade['id']) }}"
+                                onsubmit="return confirm('Tem certeza que deseja excluir esta atividade?');">
+                                <button type="submit" class="botao-excluir">
+                                    Excluir
+                                </button>
+                            </form>
+                        </div>
+                    </article>
                 {% endfor %}
             {% else %}
-                <p>Nenhuma atividade cadastrada. Comece adicionando a primeira!</p>
+                <p>Nenhuma atividade encontrada com os filtros selecionados.</p>
             {% endif %}
         </section>
+
     </main>
 </body>
 </html>

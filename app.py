@@ -29,6 +29,7 @@ def criar_tabela():
         """)
 
 
+
 @app.route("/", methods=["GET", "POST"])
 def inicio():
     if request.method == "POST":
@@ -48,28 +49,66 @@ def inicio():
 
         return redirect(url_for("inicio"))
 
-    
-    from datetime import date, timedelta
+    situacao = request.args.get("situacao", "todas")
+    disciplina_filtro = request.args.get("disciplina", "").strip()
+    ordenacao = request.args.get("ordenacao", "prazo")
+
+    if situacao not in ("todas", "pendentes", "concluidas"):
+        situacao = "todas"
+
+    if ordenacao not in ("prazo", "prioridade", "recentes"):
+        ordenacao = "prazo"
+
+    consulta = "SELECT * FROM atividades WHERE 1=1"
+    parametros = []
+
+    if situacao == "pendentes":
+        consulta += " AND concluida = 0"
+    elif situacao == "concluidas":
+        consulta += " AND concluida = 1"
+
+    if disciplina_filtro:
+        consulta += " AND disciplina = ?"
+        parametros.append(disciplina_filtro)
+
+    if ordenacao == "prazo":
+        consulta += " ORDER BY prazo ASC, id DESC"
+    elif ordenacao == "prioridade":
+        consulta += """
+            ORDER BY
+            CASE prioridade
+                WHEN 'Alta' THEN 1
+                WHEN 'Média' THEN 2
+                WHEN 'Baixa' THEN 3
+                ELSE 4
+            END,
+            prazo ASC
+        """
+    else:
+        consulta += " ORDER BY id DESC"
 
     with conectar_banco() as conexao:
-        atividades = conexao.execute("""
-            SELECT * FROM atividades
-            ORDER BY prazo ASC, id DESC
+        atividades = conexao.execute(
+            consulta, parametros
+        ).fetchall()
+
+        disciplinas = conexao.execute("""
+            SELECT DISTINCT disciplina
+            FROM atividades
+            ORDER BY disciplina ASC
         """).fetchall()
 
-        total_atividades = conexao.execute("""
-            SELECT COUNT(*) FROM atividades
-        """).fetchone()[0]
+        total_atividades = conexao.execute(
+            "SELECT COUNT(*) FROM atividades"
+        ).fetchone()[0]
 
-        pendentes = conexao.execute("""
-            SELECT COUNT(*) FROM atividades
-            WHERE concluida = 0
-        """).fetchone()[0]
+        pendentes = conexao.execute(
+            "SELECT COUNT(*) FROM atividades WHERE concluida = 0"
+        ).fetchone()[0]
 
-        concluidas = conexao.execute("""
-            SELECT COUNT(*) FROM atividades
-            WHERE concluida = 1
-        """).fetchone()[0]
+        concluidas = conexao.execute(
+            "SELECT COUNT(*) FROM atividades WHERE concluida = 1"
+        ).fetchone()[0]
 
         atrasadas = conexao.execute("""
             SELECT COUNT(*) FROM atividades
@@ -81,8 +120,8 @@ def inicio():
         proximas = conexao.execute("""
             SELECT COUNT(*) FROM atividades
             WHERE concluida = 0
-                AND prazo >= ?
-                AND prazo <= ?
+              AND prazo >= ?
+              AND prazo <= ?
         """, (date.today().isoformat(), data_limite)).fetchone()[0]
 
     return render_template(
@@ -92,8 +131,13 @@ def inicio():
         pendentes=pendentes,
         concluidas=concluidas,
         atrasadas=atrasadas,
-        proximas=proximas
+        proximas=proximas,
+        disciplinas=disciplinas,
+        situacao=situacao,
+        disciplina_filtro=disciplina_filtro,
+        ordenacao=ordenacao
     )
+
 
 
 @app.route("/concluir/<int:id>", methods=["POST"])

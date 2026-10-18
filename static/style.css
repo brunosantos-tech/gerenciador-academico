@@ -191,3 +191,47 @@ button:hover {
 .cartao-proximas {
     border-left-color: #d69e2e;
 }
+
+
+.filtros {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    align-items: end;
+    margin: 20px 0 28px;
+    padding: 18px;
+    background-color: #f3f5f9;
+    border-radius: 8px;
+}
+
+.filtros > div {
+    min-width: 0;
+}
+
+.filtros label {
+    display: block;
+    margin: 0 0 8px;
+}
+
+.botoes-filtro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.botoes-filtro button {
+    margin-top: 0;
+}
+
+.botao-limpar {
+    display: inline-block;
+    padding: 12px;
+    color: #245ca6;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.botao-limpar:hover {
+    text-decoration: underline;
+}
