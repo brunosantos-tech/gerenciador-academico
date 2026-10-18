@@ -104,3 +104,47 @@ button:hover {
         align-items: flex-start;
     }
 }
+
+
+.detalhes-atividade {
+    flex: 1;
+}
+
+.acoes-atividade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.acoes-atividade form {
+    display: block;
+}
+
+.acoes-atividade button {
+    margin-top: 0;
+}
+
+.botao-concluir {
+    background-color: #218838;
+}
+
+.botao-concluir:hover {
+    background-color: #17692b;
+}
+
+.botao-excluir {
+    background-color: #c0392b;
+}
+
+.botao-excluir:hover {
+    background-color: #922b21;
+}
+
+.atividade.concluida h3 {
+    text-decoration: line-through;
+    color: #687386;
+}
+
+.atividade.concluida {
+    opacity: 0.75;
+}

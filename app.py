@@ -56,6 +56,36 @@ def inicio():
     return render_template("index.html", atividades=atividades)
 
 
+@app.route("/concluir/<int:id>", methods=["POST"])
+def concluir(id):
+    with conectar_banco() as conexao:
+        atividade = conexao.execute(
+            "SELECT concluida FROM atividades WHERE id = ?",
+            (id,)
+        ).fetchone()
+
+        if atividade:
+            novo_status = 0 if atividade["concluida"] else 1
+
+            conexao.execute(
+                "UPDATE atividades SET concluida = ? WHERE id = ?",
+                (novo_status, id)
+            )
+
+    return redirect(url_for("inicio"))
+
+
+@app.route("/excluir/<int:id>", methods=["POST"])
+def excluir(id):
+    with conectar_banco() as conexao:
+        conexao.execute(
+            "DELETE FROM atividades WHERE id = ?",
+            (id,)
+        )
+
+    return redirect(url_for("inicio"))
+
+
 if __name__ == "__main__":
     criar_tabela()
     app.run(debug=True)
