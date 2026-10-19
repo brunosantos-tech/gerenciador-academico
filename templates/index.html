@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -18,7 +19,6 @@
             <h2>Minha vida acadêmica</h2>
             <p>Cadastre suas atividades e acompanhe os prazos da faculdade.</p>
         </section>
-
 
         <section class="painel">
             <h2>Resumo acadêmico</h2>
@@ -51,7 +51,6 @@
             </div>
         </section>
 
-        
         <section class="formulario">
             <h2>Nova atividade</h2>
 
@@ -98,7 +97,6 @@
             </form>
         </section>
 
-        
         <section class="lista-atividades">
             <h2>Minhas atividades</h2>
 
@@ -122,8 +120,8 @@
                 </div>
 
                 <div>
-                    <label for="disciplina">Disciplina</label>
-                    <select id="disciplina" name="disciplina">
+                    <label for="filtro-disciplina">Disciplina</label>
+                    <select id="filtro-disciplina" name="disciplina">
                         <option value="">Todas as disciplinas</option>
 
                         {% for item in disciplinas %}
@@ -169,7 +167,7 @@
                             <p>Disciplina: {{ atividade["disciplina"] }}</p>
                             <p>Tipo: {{ atividade["tipo"] }}</p>
                             <p>Prazo: {{ atividade["prazo"] }}</p>
-                            
+
                             {% if atividade["status_prazo"] == "atrasada" %}
                                 <p class="alerta-prazo alerta-atrasada">
                                     {{ atividade["mensagem_prazo"] }}
@@ -190,6 +188,13 @@
                         </div>
 
                         <div class="acoes-atividade">
+                            <a
+                                href="{{ url_for('editar', id=atividade['id']) }}"
+                                class="botao-editar"
+                            >
+                                Editar
+                            </a>
+
                             <form method="POST"
                                 action="{{ url_for('concluir', id=atividade['id']) }}">
                                 <button type="submit" class="botao-concluir">
@@ -215,7 +220,7 @@
                 <p>Nenhuma atividade encontrada com os filtros selecionados.</p>
             {% endif %}
         </section>
-
     </main>
 </body>
 </html>
+

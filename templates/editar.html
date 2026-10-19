@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar atividade | Gerenciador Acadêmico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Editar atividade</h1>
+        <p>Atualize os dados da sua atividade acadêmica.</p>
+    </header>
+
+    <main>
+        <form method="POST">
+            <label for="titulo">Título da atividade</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                value="{{ atividade['titulo'] }}"
+                required
+            >
+
+            <label for="disciplina">Disciplina</label>
+            <input
+                type="text"
+                id="disciplina"
+                name="disciplina"
+                value="{{ atividade['disciplina'] }}"
+                required
+            >
+
+            <label for="tipo">Tipo de atividade</label>
+            <select id="tipo" name="tipo" required>
+                {% for opcao in ['Trabalho', 'Prova', 'Seminário', 'Leitura', 'Outra'] %}
+                    <option value="{{ opcao }}"
+                        {% if atividade['tipo'] == opcao %}selected{% endif %}>
+                        {{ opcao }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="prazo">Prazo</label>
+            <input
+                type="date"
+                id="prazo"
+                name="prazo"
+                value="{{ atividade['prazo'] }}"
+                required
+            >
+
+            <label for="prioridade">Prioridade</label>
+            <select id="prioridade" name="prioridade" required>
+                {% for opcao in ['Baixa', 'Média', 'Alta'] %}
+                    <option value="{{ opcao }}"
+                        {% if atividade['prioridade'] == opcao %}selected{% endif %}>
+                        {{ opcao }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Salvar alterações</button>
+            <a href="{{ url_for('inicio') }}">Cancelar</a>
+        </form>
+    </main>
+</body>
+</html>

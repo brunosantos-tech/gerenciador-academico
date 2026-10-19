@@ -175,6 +175,37 @@ def inicio():
     )
 
 
+@app.route("/editar/<int:id>", methods=["GET", "POST"])
+def editar(id):
+    with conectar_banco() as conexao:
+        atividade = conexao.execute(
+            "SELECT * FROM atividades WHERE id = ?", (id,)
+        ).fetchone()
+
+        if atividade is None:
+            return redirect(url_for("inicio"))
+
+        if request.method == "POST":
+            titulo = request.form["titulo"].strip()
+            disciplina = request.form["disciplina"].strip()
+            tipo = request.form["tipo"]
+            prazo = request.form["prazo"]
+            prioridade = request.form["prioridade"]
+
+            if titulo and disciplina and tipo and prazo and prioridade:
+                conexao.execute("""
+                    UPDATE atividades
+                    SET titulo = ?, disciplina = ?, tipo = ?,
+                        prazo = ?, prioridade = ?
+                    WHERE id = ?
+                """, (
+                    titulo, disciplina, tipo, prazo, prioridade, id
+                ))
+
+                return redirect(url_for("inicio"))
+
+    return render_template("editar.html", atividade=atividade)
+
 
 @app.route("/concluir/<int:id>", methods=["POST"])
 def concluir(id):
