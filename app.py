@@ -1,5 +1,7 @@
 
 import sqlite3
+import calendar
+
 from flask import Flask, render_template, request, redirect, url_for
 from datetime import date, timedelta
 
@@ -235,6 +237,99 @@ def excluir(id):
         )
 
     return redirect(url_for("inicio"))
+
+
+@app.route("/calendario")
+def calendario_academico():
+    hoje = date.today()
+
+    ano = request.args.get("ano", hoje.year, type=int)
+    mes = request.args.get("mes", hoje.month, type=int)
+
+    # Impede meses inválidos e anos fora do intervalo esperado.
+    if mes < 1 or mes > 12 or ano < 2000 or ano > 2100:
+        ano = hoje.year
+        mes = hoje.month
+
+    # Organiza o calendário começando na segunda-feira.
+    semanas = calendar.monthcalendar(ano, mes)
+
+    meses = [
+        "Janeiro", "Fevereiro", "Março", "Abril",
+        "Maio", "Junho", "Julho", "Agosto",
+        "Setembro", "Outubro", "Novembro", "Dezembro"
+    ]
+
+    # Calcula o mês anterior.
+    if mes == 1:
+        ano_anterior = ano - 1
+        mes_anterior = 12
+    else:
+        ano_anterior = ano
+        mes_anterior = mes - 1
+
+    # Calcula o próximo mês.
+    if mes == 12:
+        ano_proximo = ano + 1
+        mes_proximo = 1
+    else:
+        ano_proximo = ano
+        mes_proximo = mes + 1
+
+    # Busca as atividades que vencem no mês selecionado.
+    inicio_mes = f"{ano:04d}-{mes:02d}-01"
+
+    if mes == 12:
+        inicio_proximo_mes = f"{ano + 1:04d}-01-01"
+    else:
+        inicio_proximo_mes = f"{ano:04d}-{mes + 1:02d}-01"
+
+    with conectar_banco() as conexao:
+        atividades = conexao.execute("""
+            SELECT *
+            FROM atividades
+            WHERE prazo >= ? AND prazo < ?
+            ORDER BY prazo ASC, prioridade ASC
+        """, (inicio_mes, inicio_proximo_mes)).fetchall()
+
+    # Agrupa as atividades pelo dia do mês.
+    atividades_por_dia = {}
+
+    for registro in atividades:
+        atividade = dict(registro)
+        prazo = date.fromisoformat(atividade["prazo"])
+        dia = prazo.day
+
+        dias_restantes = (prazo - hoje).days
+
+        if atividade["concluida"]:
+            atividade["status_prazo"] = "concluida"
+            atividade["mensagem_prazo"] = "Concluída"
+        elif dias_restantes < 0:
+            atividade["status_prazo"] = "atrasada"
+            atividade["mensagem_prazo"] = "Atrasada"
+        elif dias_restantes <= 3:
+            atividade["status_prazo"] = "proxima"
+            atividade["mensagem_prazo"] = "Prazo próximo"
+        else:
+            atividade["status_prazo"] = "normal"
+            atividade["mensagem_prazo"] = ""
+
+        atividades_por_dia.setdefault(dia, []).append(atividade)
+
+    return render_template(
+        "calendario.html",
+        ano=ano,
+        mes=mes,
+        nome_mes=meses[mes - 1],
+        semanas=semanas,
+        atividades_por_dia=atividades_por_dia,
+        ano_anterior=ano_anterior,
+        mes_anterior=mes_anterior,
+        ano_proximo=ano_proximo,
+        mes_proximo=mes_proximo,
+        hoje=hoje
+    )
 
 
 if __name__ == "__main__":

@@ -263,3 +263,230 @@ button:hover {
     color: #216e39;
     border-left: 4px solid #218838;
 }
+
+
+.botao-editar {
+    display: inline-block;
+    padding: 10px 16px;
+    background-color: #3498db;
+    color: #ffffff;
+    text-decoration: none;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.botao-editar:hover {
+    background-color: #2980b9;
+}
+
+
+/* Calendário acadêmico */
+
+.calendario-container {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.calendario-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.calendario-cabecalho h2 {
+    margin: 0;
+    text-align: center;
+}
+
+.botao-calendario,
+.botao-voltar {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background-color: #3498db;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}
+
+.botao-calendario:hover,
+.botao-voltar:hover {
+    background-color: #2980b9;
+}
+
+.calendario-grade {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-top: 1px solid #e0e0e0;
+    border-left: 1px solid #e0e0e0;
+}
+
+.calendario-dia-semana {
+    padding: 12px 4px;
+    background-color: #edf3f8;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.calendario-dia {
+    min-width: 0;
+    min-height: 115px;
+    padding: 6px;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-wrap: anywhere;
+}
+
+.calendario-dia.vazio {
+    background-color: #f7f8fa;
+}
+
+.calendario-dia.dia-hoje {
+    background-color: #eaf4ff;
+    box-shadow: inset 0 0 0 2px #3498db;
+}
+
+.numero-dia {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.evento-calendario {
+    display: block;
+    margin-bottom: 5px;
+    padding: 6px;
+    border-radius: 5px;
+    color: #263238;
+    text-decoration: none;
+    font-size: 12px;
+    border-left: 4px solid #7f8c8d;
+}
+
+.evento-calendario strong,
+.evento-calendario small {
+    display: block;
+}
+
+.evento-calendario strong {
+    overflow-wrap: anywhere;
+}
+
+.evento-calendario:hover {
+    filter: brightness(0.96);
+}
+
+.evento-normal {
+    background-color: #edf1f4;
+    border-left-color: #7f8c8d;
+}
+
+.evento-proxima {
+    background-color: #fff3cd;
+    border-left-color: #d69e2e;
+}
+
+.evento-atrasada {
+    background-color: #fde8e7;
+    border-left-color: #c0392b;
+}
+
+.evento-concluida {
+    background-color: #e4f5e9;
+    border-left-color: #218838;
+}
+
+.legenda-calendario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin: 20px 0;
+}
+
+.legenda-calendario span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+}
+
+.legenda-cor {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+}
+
+.legenda-normal {
+    background-color: #7f8c8d;
+}
+
+.legenda-proxima {
+    background-color: #d69e2e;
+}
+
+.legenda-atrasada {
+    background-color: #c0392b;
+}
+
+.legenda-concluida {
+    background-color: #218838;
+}
+
+.orientacao-calendario {
+    margin-bottom: 16px;
+    color: #555555;
+}
+
+@media (max-width: 700px) {
+    .calendario-container {
+        padding: 10px;
+    }
+
+    .calendario-cabecalho {
+        flex-wrap: wrap;
+    }
+
+    .calendario-cabecalho h2 {
+        flex: 1;
+        font-size: 18px;
+    }
+
+    .botao-calendario {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .calendario-dia {
+        min-height: 75px;
+        padding: 3px;
+    }
+
+    .calendario-dia-semana {
+        font-size: 11px;
+        padding: 8px 2px;
+    }
+
+    .evento-calendario {
+        padding: 3px;
+        font-size: 10px;
+    }
+
+    .evento-calendario small {
+        display: none;
+    }
+}

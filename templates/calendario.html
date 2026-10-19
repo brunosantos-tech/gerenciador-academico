@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Acadêmico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Calendário Acadêmico</h1>
+        <p>Visualize os prazos das suas atividades por mês.</p>
+    </header>
+
+    <main>
+        <section class="calendario-container">
+
+            <div class="calendario-cabecalho">
+                <a
+                    class="botao-calendario"
+                    href="{{ url_for('calendario_academico', ano=ano_anterior, mes=mes_anterior) }}"
+                >
+                    &larr; Anterior
+                </a>
+
+                <h2>{{ nome_mes }} de {{ ano }}</h2>
+
+                <a
+                    class="botao-calendario"
+                    href="{{ url_for('calendario_academico', ano=ano_proximo, mes=mes_proximo) }}"
+                >
+                    Próximo &rarr;
+                </a>
+            </div>
+
+            <div class="calendario-grade">
+                {% for dia_semana in [
+                    'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'
+                ] %}
+                    <div class="calendario-dia-semana">
+                        {{ dia_semana }}
+                    </div>
+                {% endfor %}
+
+                {% for semana in semanas %}
+                    {% for dia in semana %}
+                        {% if dia == 0 %}
+                            <div class="calendario-dia vazio"></div>
+                        {% else %}
+                            <div class="calendario-dia
+                                {% if hoje.year == ano and hoje.month == mes and hoje.day == dia %}
+                                    dia-hoje
+                                {% endif %}">
+
+                                <span class="numero-dia">{{ dia }}</span>
+
+                                {% for atividade in atividades_por_dia.get(dia, []) %}
+                                    <a
+                                        class="evento-calendario evento-{{ atividade['status_prazo'] }}"
+                                        href="{{ url_for('editar', id=atividade['id']) }}"
+                                        title="{{ atividade['titulo'] }} - {{ atividade['disciplina'] }}"
+                                    >
+                                        <strong>{{ atividade['titulo'] }}</strong>
+                                        <small>{{ atividade['tipo'] }}</small>
+                                    </a>
+                                {% endfor %}
+
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="legenda-calendario">
+                <span><i class="legenda-cor legenda-normal"></i> Dentro do prazo</span>
+                <span><i class="legenda-cor legenda-proxima"></i> Prazo próximo</span>
+                <span><i class="legenda-cor legenda-atrasada"></i> Atrasada</span>
+                <span><i class="legenda-cor legenda-concluida"></i> Concluída</span>
+            </div>
+
+            <p class="orientacao-calendario">
+                Clique em uma atividade para editar seus dados.
+            </p>
+
+            <a href="{{ url_for('inicio') }}" class="botao-voltar">
+                Voltar para minhas atividades
+            </a>
+
+        </section>
+    </main>
+</body>
+</html>
