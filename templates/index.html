@@ -90,7 +90,13 @@
                 </select>
 
                 <label for="prazo">Data de entrega ou realização</label>
-                <input type="date" id="prazo" name="prazo" required>
+                <input
+                    type="date"
+                    id="prazo"
+                    name="prazo"
+                    value="{{ prazo_predefinido }}"
+                    required
+                >
 
                 <label for="prioridade">Prioridade</label>
                 <select id="prioridade" name="prioridade" required>

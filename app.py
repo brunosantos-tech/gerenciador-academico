@@ -173,7 +173,8 @@ def inicio():
         disciplinas=disciplinas,
         situacao=situacao,
         disciplina_filtro=disciplina_filtro,
-        ordenacao=ordenacao
+        ordenacao=ordenacao,
+        prazo_predefinido=request.args.get("prazo", "")
     )
 
 

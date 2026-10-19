@@ -490,3 +490,18 @@ button:hover {
         display: none;
     }
 }
+
+.adicionar-evento {
+    display: block;
+    margin: 5px 0;
+    padding: 4px;
+    border-radius: 4px;
+    color: #2563eb;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.adicionar-evento:hover {
+    background-color: #eff6ff;
+    text-decoration: underline;
+}

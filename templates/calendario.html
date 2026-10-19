@@ -55,6 +55,13 @@
 
                                 <span class="numero-dia">{{ dia }}</span>
 
+                                <a
+                                    class="adicionar-evento"
+                                    href="{{ url_for('inicio', prazo='%04d-%02d-%02d'|format(ano, mes, dia)) }}"
+                                >
+                                    + Adicionar
+                                </a>
+
                                 {% for atividade in atividades_por_dia.get(dia, []) %}
                                     <a
                                         class="evento-calendario evento-{{ atividade['status_prazo'] }}"
