@@ -124,6 +124,42 @@ def inicio():
               AND prazo <= ?
         """, (date.today().isoformat(), data_limite)).fetchone()[0]
 
+
+    atividades = [dict(atividade) for atividade in atividades]
+
+    hoje = date.today()
+
+    for atividade in atividades:
+        prazo = date.fromisoformat(atividade["prazo"])
+        dias_restantes = (prazo - hoje).days
+
+        if atividade["concluida"]:
+            atividade["status_prazo"] = "concluida"
+            atividade["mensagem_prazo"] = "Atividade concluída"
+
+        elif dias_restantes < 0:
+            atividade["status_prazo"] = "atrasada"
+            atividade["mensagem_prazo"] = (
+                f"Atrasada há {abs(dias_restantes)} dia(s)"
+            )
+
+        elif dias_restantes <= 3:
+            atividade["status_prazo"] = "proxima"
+
+            if dias_restantes == 0:
+                atividade["mensagem_prazo"] = "Prazo vence hoje"
+            elif dias_restantes == 1:
+                atividade["mensagem_prazo"] = "Prazo vence amanhã"
+            else:
+                atividade["mensagem_prazo"] = (
+                    f"Prazo em {dias_restantes} dias"
+                )
+
+        else:
+            atividade["status_prazo"] = "normal"
+            atividade["mensagem_prazo"] = ""
+
+
     return render_template(
         "index.html",
         atividades=atividades,

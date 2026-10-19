@@ -169,6 +169,20 @@
                             <p>Disciplina: {{ atividade["disciplina"] }}</p>
                             <p>Tipo: {{ atividade["tipo"] }}</p>
                             <p>Prazo: {{ atividade["prazo"] }}</p>
+                            
+                            {% if atividade["status_prazo"] == "atrasada" %}
+                                <p class="alerta-prazo alerta-atrasada">
+                                    {{ atividade["mensagem_prazo"] }}
+                                </p>
+                            {% elif atividade["status_prazo"] == "proxima" %}
+                                <p class="alerta-prazo alerta-proxima">
+                                    {{ atividade["mensagem_prazo"] }}
+                                </p>
+                            {% elif atividade["status_prazo"] == "concluida" %}
+                                <p class="alerta-prazo alerta-concluida">
+                                    {{ atividade["mensagem_prazo"] }}
+                                </p>
+                            {% endif %}
 
                             <span class="prioridade">
                                 Prioridade: {{ atividade["prioridade"] }}

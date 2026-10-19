@@ -235,3 +235,31 @@ button:hover {
 .botao-limpar:hover {
     text-decoration: underline;
 }
+
+
+.alerta-prazo {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.alerta-atrasada {
+    background-color: #fde8e7;
+    color: #a12622;
+    border-left: 4px solid #c0392b;
+}
+
+.alerta-proxima {
+    background-color: #fff3cd;
+    color: #805b00;
+    border-left: 4px solid #d69e2e;
+}
+
+.alerta-concluida {
+    background-color: #e4f5e9;
+    color: #216e39;
+    border-left: 4px solid #218838;
+}
