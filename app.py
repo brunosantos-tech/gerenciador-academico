@@ -135,6 +135,12 @@ def inicio():
 
     atividades = [dict(atividade) for atividade in atividades]
 
+    percentual_conclusao = (
+        round((concluidas / total_atividades) * 100)
+        if total_atividades > 0
+        else 0
+    )
+
     hoje = date.today()
 
     for atividade in atividades:
@@ -172,6 +178,7 @@ def inicio():
         total_atividades=total_atividades,
         pendentes=pendentes,
         concluidas=concluidas,
+        percentual_conclusao=percentual_conclusao,
         atrasadas=atrasadas,
         proximas=proximas,
         disciplinas=disciplinas,

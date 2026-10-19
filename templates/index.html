@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -53,6 +52,27 @@
                 <article class="cartao-indicador cartao-proximas">
                     <span class="rotulo">Próximos 7 dias</span>
                     <strong>{{ proximas }}</strong>
+                </article>
+
+                <article class="cartao-indicador cartao-progresso">
+                    <span class="rotulo">Progresso acadêmico</span>
+                    <strong>{{ percentual_conclusao }}%</strong>
+
+                    <div
+                        class="barra-progresso"
+                        role="progressbar"
+                        aria-label="Percentual de atividades concluídas"
+                        aria-valuenow="{{ percentual_conclusao }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                    >
+                        <div
+                            class="barra-progresso-preenchimento"
+                            style="width: {{ percentual_conclusao }}%;"
+                        ></div>
+                    </div>
+
+                    <small>Atividades concluídas</small>
                 </article>
             </div>
         </section>
@@ -114,6 +134,17 @@
 
             <form method="GET" action="/" class="filtros">
                 <div>
+                    <label for="busca">Buscar atividade</label>
+                    <input
+                        type="text"
+                        id="busca"
+                        name="busca"
+                        placeholder="Título ou disciplina..."
+                        value="{{ busca }}"
+                    >
+                </div>
+
+                <div>
                     <label for="situacao">Situação</label>
                     <select id="situacao" name="situacao">
                         <option value="todas"
@@ -129,17 +160,6 @@
                             Concluídas
                         </option>
                     </select>
-                <div>
-                    <label for="busca">Buscar atividade</label>
-                    <input
-                        type="text"
-                        id="busca"
-                        name="busca"
-                        placeholder="Título ou disciplina..."
-                        value="{{ busca }}"
-                    >
-                </div>
-
                 </div>
 
                 <div>
@@ -150,7 +170,7 @@
                         {% for item in disciplinas %}
                             <option value="{{ item['disciplina'] }}"
                                 {% if disciplina_filtro == item['disciplina'] %}selected{% endif %}>
-                                {{ item["disciplina"] }}
+                                {{ item['disciplina'] }}
                             </option>
                         {% endfor %}
                     </select>
@@ -195,6 +215,10 @@
                                 <p class="alerta-prazo alerta-atrasada">
                                     {{ atividade["mensagem_prazo"] }}
                                 </p>
+                            {% elif atividade["status_prazo"] == "vence-hoje" %}
+                                <p class="alerta-prazo evento-vence-hoje">
+                                    {{ atividade["mensagem_prazo"] }}
+                                </p>
                             {% elif atividade["status_prazo"] == "proxima" %}
                                 <p class="alerta-prazo alerta-proxima">
                                     {{ atividade["mensagem_prazo"] }}
@@ -218,8 +242,10 @@
                                 Editar
                             </a>
 
-                            <form method="POST"
-                                action="{{ url_for('concluir', id=atividade['id']) }}">
+                            <form
+                                method="POST"
+                                action="{{ url_for('concluir', id=atividade['id']) }}"
+                            >
                                 <button type="submit" class="botao-concluir">
                                     {% if atividade["concluida"] %}
                                         Reabrir atividade
@@ -229,9 +255,11 @@
                                 </button>
                             </form>
 
-                            <form method="POST"
+                            <form
+                                method="POST"
                                 action="{{ url_for('excluir', id=atividade['id']) }}"
-                                onsubmit="return confirm('Tem certeza que deseja excluir esta atividade?');">
+                                onsubmit="return confirm('Tem certeza que deseja excluir esta atividade?');"
+                            >
                                 <button type="submit" class="botao-excluir">
                                     Excluir
                                 </button>
@@ -246,4 +274,3 @@
     </main>
 </body>
 </html>
-
