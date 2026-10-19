@@ -505,3 +505,9 @@ button:hover {
     background-color: #eff6ff;
     text-decoration: underline;
 }
+
+.evento-vence-hoje {
+    background-color: #fff7ed;
+    border-left: 4px solid #ea580c;
+    color: #9a3412;
+}

@@ -53,6 +53,7 @@ def inicio():
 
     situacao = request.args.get("situacao", "todas")
     disciplina_filtro = request.args.get("disciplina", "").strip()
+    busca = request.args.get("busca", "").strip()
     ordenacao = request.args.get("ordenacao", "prazo")
 
     if situacao not in ("todas", "pendentes", "concluidas"):
@@ -72,6 +73,11 @@ def inicio():
     if disciplina_filtro:
         consulta += " AND disciplina = ?"
         parametros.append(disciplina_filtro)
+
+    if busca:
+        consulta += " AND (titulo LIKE ? OR disciplina LIKE ?)"
+        termo_busca = f"%{busca}%"
+        parametros.extend([termo_busca, termo_busca])
 
     if ordenacao == "prazo":
         consulta += " ORDER BY prazo ASC, id DESC"
@@ -148,9 +154,7 @@ def inicio():
         elif dias_restantes <= 3:
             atividade["status_prazo"] = "proxima"
 
-            if dias_restantes == 0:
-                atividade["mensagem_prazo"] = "Prazo vence hoje"
-            elif dias_restantes == 1:
+            if dias_restantes == 1:
                 atividade["mensagem_prazo"] = "Prazo vence amanhã"
             else:
                 atividade["mensagem_prazo"] = (
@@ -173,6 +177,7 @@ def inicio():
         disciplinas=disciplinas,
         situacao=situacao,
         disciplina_filtro=disciplina_filtro,
+        busca=busca,
         ordenacao=ordenacao,
         prazo_predefinido=request.args.get("prazo", "")
     )
