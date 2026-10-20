@@ -538,3 +538,25 @@ button:hover {
     margin-top: 8px;
     color: #6b7280;
 }
+
+
+.secao-grafico {
+    margin-top: 30px;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.secao-grafico h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.container-grafico {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+

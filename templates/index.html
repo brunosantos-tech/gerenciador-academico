@@ -77,6 +77,16 @@
             </div>
         </section>
 
+        
+        <section class="secao-grafico">
+            <h2>Visão geral das atividades</h2>
+
+            <div class="container-grafico">
+                <canvas id="graficoAtividades"></canvas>
+            </div>
+        </section>
+
+
         <section class="formulario">
             <h2>Nova atividade</h2>
 
@@ -273,4 +283,51 @@
         </section>
     </main>
 </body>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const dadosGrafico = {{ dados_grafico | tojson }};
+
+    const elementoGrafico = document.getElementById("graficoAtividades");
+
+    new Chart(elementoGrafico, {
+        type: "doughnut",
+
+        data: {
+            labels: ["Concluídas", "Pendentes", "Atrasadas"],
+
+            datasets: [{
+                data: [
+                    dadosGrafico.concluidas,
+                    dadosGrafico.pendentes,
+                    dadosGrafico.atrasadas
+                ],
+                backgroundColor: [
+                    "#16a34a",
+                    "#2563eb",
+                    "#ea580c"
+                ],
+                borderWidth: 2,
+                borderColor: "#ffffff"
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                },
+                tooltip: {
+                    enabled: true
+                }
+            }
+        }
+    });
+</script>
+</body>
 </html>
+

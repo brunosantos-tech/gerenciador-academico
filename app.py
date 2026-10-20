@@ -186,7 +186,12 @@ def inicio():
         disciplina_filtro=disciplina_filtro,
         busca=busca,
         ordenacao=ordenacao,
-        prazo_predefinido=request.args.get("prazo", "")
+        prazo_predefinido=request.args.get("prazo", ""),
+        dados_grafico={
+            "concluídas": concluidas,
+            "pendentes": pendentes - atrasadas,
+            "atrasadas": atrasadas
+        }
     )
 
 
