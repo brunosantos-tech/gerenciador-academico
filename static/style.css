@@ -618,3 +618,417 @@ button:hover {
     color: #c2410c;
 }
 
+
+/* Painel de prioridades */
+
+.lista-prioridades {
+    display: grid;
+    gap: 14px;
+}
+
+.item-prioridade {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 18px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #245ca6;
+    border-radius: 10px;
+}
+
+.detalhes-prioridade {
+    flex: 1;
+    min-width: 0;
+}
+
+.detalhes-prioridade h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.detalhes-prioridade p {
+    margin: 6px 0;
+}
+
+.status-prioridade {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.status-prioridade span {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.prioridade-atrasada {
+    color: #c0392b;
+}
+
+.prioridade-hoje {
+    color: #c2410c;
+}
+
+.prioridade-proxima {
+    color: #245ca6;
+}
+
+.mensagem-sem-prioridades {
+    padding: 16px;
+    color: #216e39;
+    background-color: #e4f5e9;
+    border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+    .item-prioridade {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .status-prioridade {
+        align-items: flex-start;
+        width: 100%;
+    }
+}
+
+
+/* Previsão de carga acadêmica semanal */
+.lista-carga-semanal {
+    display: grid;
+    gap: 16px;
+}
+
+.item-carga-semanal {
+    padding: 18px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.cabecalho-carga-semanal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cabecalho-carga-semanal h3 {
+    margin: 0;
+}
+
+.cabecalho-carga-semanal span {
+    font-weight: bold;
+}
+
+.item-carga-semanal p {
+    margin: 14px 0 10px;
+}
+
+.item-carga-semanal small {
+    display: block;
+    margin-top: 10px;
+}
+
+.barra-carga-preenchimento.carga-baixa {
+    background-color: #15803d;
+}
+
+.barra-carga-preenchimento.carga-moderada {
+    background-color: #d97706;
+}
+
+.barra-carga-preenchimento.carga-alta {
+    background-color: #dc2626;
+}
+
+.item-carga-semanal .carga-baixa {
+    color: #15803d;
+}
+
+.item-carga-semanal .carga-moderada {
+    color: #b45309;
+}
+
+.item-carga-semanal .carga-alta {
+    color: #dc2626;
+}
+
+@media (max-width: 600px) {
+    .cabecalho-carga-semanal {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+
+/* Previsão de carga acadêmica semanal */
+.lista-carga-semanal {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.semana-carga {
+    padding: 18px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #64748b;
+    border-radius: 10px;
+}
+
+.semana-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.semana-cabecalho h3 {
+    margin: 0 0 8px;
+}
+
+.semana-cabecalho p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.semana-quantidade {
+    font-weight: bold;
+    color: #253047;
+}
+
+.barra-carga-semanal {
+    height: 10px;
+    margin-top: 18px;
+    overflow: hidden;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+}
+
+.barra-carga-semanal-preenchimento {
+    height: 100%;
+    background-color: #64748b;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.semana-mensagem {
+    margin: 12px 0 0;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.semana-baixa {
+    border-left-color: #15803d;
+}
+
+.semana-baixa .semana-mensagem {
+    color: #15803d;
+}
+
+.semana-baixa .barra-carga-semanal-preenchimento {
+    background-color: #16a34a;
+}
+
+.semana-moderada {
+    border-left-color: #d97706;
+}
+
+.semana-moderada .semana-mensagem {
+    color: #b45309;
+}
+
+.semana-moderada .barra-carga-semanal-preenchimento {
+    background-color: #d97706;
+}
+
+.semana-alta {
+    border-left-color: #dc2626;
+}
+
+.semana-alta .semana-mensagem {
+    color: #b91c1c;
+}
+
+.semana-alta .barra-carga-semanal-preenchimento {
+    background-color: #dc2626;
+}
+
+@media (max-width: 600px) {
+    .lista-carga-semanal {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* Registro de notas */
+.formulario-nota {
+    margin-top: 18px;
+    padding: 16px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.formulario-nota h4 {
+    margin: 0 0 12px;
+    color: #183153;
+}
+
+.form-nota {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.form-nota label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #374151;
+}
+
+.form-nota input {
+    width: 130px;
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.nota-registrada {
+    margin: 0 0 14px;
+    color: #166534;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .form-nota {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .form-nota input {
+        width: 100%;
+    }
+}
+
+
+/* Painel de desempenho por disciplina */
+.painel-desempenho {
+    margin-bottom: 30px;
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.painel-desempenho h2 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: #183153;
+}
+
+.descricao-desempenho {
+    margin-top: 0;
+    margin-bottom: 22px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.lista-desempenho {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.card-desempenho {
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background-color: #f9fafb;
+}
+
+.cabecalho-desempenho {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.cabecalho-desempenho h3 {
+    margin: 0;
+    color: #253047;
+    font-size: 16px;
+    overflow-wrap: anywhere;
+}
+
+.percentual-desempenho {
+    color: #183153;
+    font-size: 20px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.barra-desempenho {
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+}
+
+.progresso-desempenho {
+    height: 100%;
+    background-color: #2563eb;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.quantidade-notas {
+    margin: 12px 0 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.desempenho-vazio {
+    padding: 20px;
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+}
+
+.desempenho-vazio p {
+    margin-top: 0;
+    margin-bottom: 6px;
+    color: #334155;
+    font-weight: bold;
+}
+
+.desempenho-vazio span {
+    color: #64748b;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .painel-desempenho {
+        padding: 16px;
+    }
+
+    .lista-desempenho {
+        grid-template-columns: 1fr;
+    }
+}
+

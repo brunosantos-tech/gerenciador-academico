@@ -77,6 +77,108 @@
             </div>
         </section>
 
+
+        <section class="secao-grafico painel-prioridades">
+            <h2>Prioridades de hoje</h2>
+            <p>
+                Atividades que precisam de atenção agora
+                ou têm prazo nos próximos sete dias.
+            </p>
+
+            {% if prioridades %}
+                <div class="lista-prioridades">
+                    {% for atividade in prioridades %}
+                        <article class="item-prioridade">
+                            <div class="detalhes-prioridade">
+                                <h3>{{ atividade["titulo"] }}</h3>
+
+                                <p>
+                                    Disciplina:
+                                    {{ atividade["disciplina"] }}
+                                </p>
+
+                                <p>
+                                    Tipo: {{ atividade["tipo"] }}
+                                </p>
+
+                                <p>
+                                    Prioridade:
+                                    {{ atividade["prioridade"] }}
+                                </p>
+                            </div>
+
+                            <div class="status-prioridade">
+                                <span class="{{ atividade['classe_prioridade'] }}">
+                                    {{ atividade["mensagem_prioridade"] }}
+                                </span>
+
+                                <a
+                                    href="{{ url_for('editar', id=atividade['id']) }}"
+                                    class="botao-editar"
+                                >
+                                    Ver atividade
+                                </a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="mensagem-sem-prioridades">
+                    Tudo em dia! Não há atividades vencidas
+                    ou com prazo nos próximos sete dias.
+                </p>
+            {% endif %}
+        </section>
+
+
+        <section class="secao-grafico painel-carga-semanal">
+            <h2>Previsão de carga acadêmica</h2>
+
+            <p>
+                Veja quantas atividades pendentes estão previstas
+                para cada semana nas próximas quatro semanas.
+            </p>
+
+            {% if carga_semanal %}
+                <div class="lista-carga-semanal">
+                    {% for semana in carga_semanal %}
+                        <article class="item-carga-semanal">
+                            <div class="cabecalho-carga-semanal">
+                                <h3>
+                                    {{ semana["inicio"] }} a {{ semana["fim"] }}
+                                </h3>
+
+                                <span class="{{ semana['classe'] }}">
+                                    {{ semana["classificacao"] }}
+                                </span>
+                            </div>
+
+                            <p>
+                                <strong>
+                                    {{ semana["quantidade"] }}
+                                </strong>
+                                atividade(s) pendente(s)
+                            </p>
+
+                            <div class="barra-carga">
+                                <div
+                                    class="barra-carga-preenchimento {{ semana['classe'] }}"
+                                    style="width: {{ [semana['quantidade'] * 10, 100] | min }}%;"
+                                ></div>
+                            </div>
+
+                            <small>{{ semana["mensagem"] }}</small>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="mensagem-sem-prioridades">
+                    Nenhuma atividade pendente com prazo nas
+                    próximas quatro semanas.
+                </p>
+            {% endif %}
+        </section>
+
         
         <section class="secao-grafico">
             <h2>Visão geral das atividades</h2>
@@ -92,7 +194,7 @@
             <p>Veja onde você tem mais atividades pendentes.</p>
 
             <div class="lista-carga">
-                {% for item in desempenho_disciplinas %}
+                {% for item in carga_disciplinas %}
                     {% set percentual = (item['pendentes'] / item['total'] * 100) | round | int if item['total'] > 0 else 0 %}
 
                     <article class="item-carga">
@@ -193,7 +295,7 @@
                 <button type="submit">Cadastrar atividade</button>
             </form>
         </section>
-
+        
         <section class="lista-atividades">
             <h2>Minhas atividades</h2>
 
@@ -208,7 +310,7 @@
                         value="{{ busca }}"
                     >
                 </div>
-
+ 
                 <div>
                     <label for="situacao">Situação</label>
                     <select id="situacao" name="situacao">
@@ -233,8 +335,10 @@
                         <option value="">Todas as disciplinas</option>
 
                         {% for item in disciplinas %}
-                            <option value="{{ item['disciplina'] }}"
-                                {% if disciplina_filtro == item['disciplina'] %}selected{% endif %}>
+                            <option
+                                value="{{ item['disciplina'] }}"
+                                {% if disciplina_filtro == item['disciplina'] %}selected{% endif %}
+                            >
                                 {{ item['disciplina'] }}
                             </option>
                         {% endfor %}
@@ -270,6 +374,7 @@
             {% if atividades %}
                 {% for atividade in atividades %}
                     <article class="atividade {% if atividade['concluida'] %}concluida{% endif %}">
+
                         <div class="detalhes-atividade">
                             <h3>{{ atividade["titulo"] }}</h3>
                             <p>Disciplina: {{ atividade["disciplina"] }}</p>
@@ -330,10 +435,118 @@
                                 </button>
                             </form>
                         </div>
+
+                        <div class="formulario-nota">
+                            <h4>Nota da atividade</h4>
+
+                            {% if atividade["nota_obtida"] is not none
+                                and atividade["nota_maxima"] is not none
+                                and atividade["nota_maxima"] > 0 %}
+                                <p class="nota-registrada">
+                                    Nota registrada:
+                                    <strong>
+                                        {{ "%.2f"|format(atividade["nota_obtida"]) }}
+                                        / {{ "%.2f"|format(atividade["nota_maxima"]) }}
+                                    </strong>
+                                    — {{ "%.1f"|format(
+                                        atividade["nota_obtida"]
+                                        / atividade["nota_maxima"] * 100
+                                    ) }}% de aproveitamento
+                                </p>
+                            {% endif %}
+
+                            <form
+                                action="{{ url_for('registrar_nota', id=atividade['id']) }}"
+                                method="POST"
+                                class="form-nota"
+                            >
+                                <label>
+                                    Nota obtida
+                                    <input
+                                        type="number"
+                                        name="nota_obtida"
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                        value="{{ atividade['nota_obtida'] if atividade['nota_obtida'] is not none else '' }}"
+                                    >
+                                </label>
+
+                                <label>
+                                    Nota máxima
+                                    <input
+                                        type="number"
+                                        name="nota_maxima"
+                                        min="0.01"
+                                        step="0.01"
+                                        required
+                                        value="{{ atividade['nota_maxima'] if atividade['nota_maxima'] is not none else '10' }}"
+                                    >
+                                </label>
+
+                                <button type="submit" class="botao-editar">
+                                    Salvar nota
+                                </button>
+                            </form>
+                        </div>
+
                     </article>
                 {% endfor %}
             {% else %}
                 <p>Nenhuma atividade encontrada com os filtros selecionados.</p>
+            {% endif %}
+        </section>
+
+        <section class="painel-desempenho">
+            <h2>Desempenho por disciplina</h2>
+            <p class="descricao-desempenho">
+                Acompanhe seu aproveitamento nas atividades avaliadas.
+            </p>
+
+            {% if desempenho_disciplinas %}
+                <div class="lista-desempenho">
+                    {% for item in desempenho_disciplinas %}
+                        <article class="card-desempenho">
+                            <div class="cabecalho-desempenho">
+                                <h3>{{ item["disciplina"] }}</h3>
+                                <span class="percentual-desempenho">
+                                    {{ "%.1f"|format(item["media_aproveitamento"]) }}%
+                                </span>
+                            </div>
+
+                            <div
+                                class="barra-desempenho"
+                                role="progressbar"
+                                aria-label="Aproveitamento em {{ item['disciplina'] }}"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                aria-valuenow="{{ item['media_aproveitamento'] }}"
+                            >
+                                <div
+                                    class="progresso-desempenho"
+                                    style="width: {{ [[item['media_aproveitamento'], 0]|max, 100]|min }}%;"
+                                ></div>
+                            </div>
+
+                            <p class="quantidade-notas">
+                                {{ item["total_notas"] }}
+                                {% if item["total_notas"] == 1 %}
+                                    atividade avaliada
+                                {% else %}
+                                    atividades avaliadas
+                                {% endif %}
+                            </p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="desempenho-vazio">
+                    <p>Você ainda não possui notas registradas.</p>
+                    <span>
+                        Registre notas nas suas atividades para visualizar
+                        o desempenho de cada disciplina.
+                    </span>
+                </div>
             {% endif %}
         </section>
     </main>

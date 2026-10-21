@@ -31,6 +31,28 @@ def criar_tabela():
         """)
 
 
+    # Adiciona os campos de nota caso ainda não existam.
+    with conectar_banco() as conexao:
+        colunas = [
+            coluna["name"]
+            for coluna in conexao.execute(
+                "PRAGMA table_info(atividades)"
+            ).fetchall()
+        ]
+
+        if "nota_obtida" not in colunas:
+            conexao.execute("""
+                ALTER TABLE atividades
+                ADD COLUMN nota_obtida REAL
+            """)
+
+        if "nota_maxima" not in colunas:
+            conexao.execute("""
+                ALTER TABLE atividades
+                ADD COLUMN nota_maxima REAL
+            """)
+
+
 
 @app.route("/", methods=["GET", "POST"])
 def inicio():
@@ -149,7 +171,124 @@ def inicio():
         """, (date.today().isoformat(), data_limite)).fetchone()[0]
 
 
+        # Busca atividades pendentes com prazo nas próximas quatro semanas.
+        hoje_carga = date.today()
+        limite_carga = hoje_carga + timedelta(days=28)
+
+        atividades_carga = conexao.execute("""
+            SELECT prazo, COUNT(*) AS quantidade
+            FROM atividades
+            WHERE concluida = 0
+              AND prazo >= ?
+              AND prazo <= ?
+            GROUP BY prazo
+            ORDER BY prazo ASC
+        """, (
+            hoje_carga.isoformat(),
+            limite_carga.isoformat()
+        )).fetchall()
+
+
+        # Busca atividades pendentes vencidas ou com prazo nos próximos 7 dias.
+        hoje_iso = date.today().isoformat()
+        limite_prioridades = (
+            date.today() + timedelta(days=7)
+        ).isoformat()
+
+        prioridades = conexao.execute("""
+            SELECT *
+            FROM atividades
+            WHERE concluida = 0
+              AND prazo <= ?
+            ORDER BY
+                CASE
+                    WHEN prazo < ? THEN 1
+                    WHEN prazo = ? THEN 2
+                    ELSE 3
+                END,
+                prazo ASC,
+                CASE prioridade
+                    WHEN 'Alta' THEN 1
+                    WHEN 'Média' THEN 2
+                    WHEN 'Baixa' THEN 3
+                    ELSE 4
+                END
+        """, (
+            limite_prioridades,
+            hoje_iso,
+            hoje_iso
+        )).fetchall()
+
+
     atividades = [dict(atividade) for atividade in atividades]
+
+    # Agrupa a quantidade de atividades por semana.
+    carga_semanal = {}
+
+    for item in atividades_carga:
+        prazo = date.fromisoformat(item["prazo"])
+
+        # A semana começa na segunda-feira.
+        inicio_semana = prazo - timedelta(days=prazo.weekday())
+        fim_semana = inicio_semana + timedelta(days=6)
+
+        chave_semana = inicio_semana.isoformat()
+
+        if chave_semana not in carga_semanal:
+            carga_semanal[chave_semana] = {
+                "inicio": inicio_semana.strftime("%d/%m"),
+                "fim": fim_semana.strftime("%d/%m"),
+                "quantidade": 0
+            }
+
+        carga_semanal[chave_semana]["quantidade"] += item["quantidade"]
+
+    # Transforma os dados em uma lista para o template.
+    carga_semanal = list(carga_semanal.values())
+
+    # Classifica o volume de atividades de cada semana.
+    for semana in carga_semanal:
+        quantidade = semana["quantidade"]
+
+        if quantidade >= 7:
+            semana["classificacao"] = "Sobrecarga"
+            semana["classe"] = "carga-alta"
+            semana["mensagem"] = "Muitas atividades nesta semana"
+        elif quantidade >= 4:
+            semana["classificacao"] = "Atenção"
+            semana["classe"] = "carga-moderada"
+            semana["mensagem"] = "Organize seus estudos com antecedência"
+        else:
+            semana["classificacao"] = "Normal"
+            semana["classe"] = "carga-baixa"
+            semana["mensagem"] = "Carga de atividades administrável"
+
+
+    prioridades = [dict(atividade) for atividade in prioridades]
+
+    for atividade in prioridades:
+        prazo = date.fromisoformat(atividade["prazo"])
+        dias_restantes = (prazo - date.today()).days
+
+        if dias_restantes < 0:
+            atividade["mensagem_prioridade"] = (
+                f"Atrasada há {abs(dias_restantes)} dia(s)"
+            )
+            atividade["classe_prioridade"] = "prioridade-atrasada"
+
+        elif dias_restantes == 0:
+            atividade["mensagem_prioridade"] = "Vence hoje"
+            atividade["classe_prioridade"] = "prioridade-hoje"
+
+        elif dias_restantes == 1:
+            atividade["mensagem_prioridade"] = "Vence amanhã"
+            atividade["classe_prioridade"] = "prioridade-proxima"
+
+        else:
+            atividade["mensagem_prioridade"] = (
+                f"Vence em {dias_restantes} dias"
+            )
+            atividade["classe_prioridade"] = "prioridade-proxima"
 
     percentual_conclusao = (
         round((concluidas / total_atividades) * 100)
@@ -188,9 +327,60 @@ def inicio():
             atividade["mensagem_prazo"] = ""
 
 
+
+    # Calcula o desempenho acadêmico por disciplina.
+    with conectar_banco() as conexao:
+        resultados_desempenho = conexao.execute("""
+            SELECT
+                disciplina,
+                COUNT(*) AS total_notas,
+                ROUND(
+                    AVG(
+                        (nota_obtida * 100.0) / nota_maxima
+                    ),
+                    1
+                ) AS media_aproveitamento
+            FROM atividades
+            WHERE nota_obtida IS NOT NULL
+              AND nota_maxima IS NOT NULL
+              AND nota_maxima > 0
+            GROUP BY disciplina
+            ORDER BY media_aproveitamento DESC
+        """).fetchall()
+
+    desempenho_disciplinas = [
+        dict(item) for item in resultados_desempenho
+    ]
+
+    print("DEBUG DESEMPENHO:", desempenho_disciplinas)
+
+    # Calcula o desempenho acadêmico por disciplina.
+    with conectar_banco() as conexao:
+        resultados_carga = conexao.execute("""
+            SELECT
+                disciplina,
+                COUNT(*) AS total,
+                SUM(
+                    CASE
+                        WHEN concluida = 0 THEN 1
+                        ELSE 0
+                    END
+                ) AS pendentes
+            FROM atividades
+            GROUP BY disciplina
+            ORDER BY pendentes DESC
+        """).fetchall()
+
+    carga_disciplinas = [
+        dict(item) for item in resultados_carga
+    ]
+
     return render_template(
         "index.html",
         atividades=atividades,
+        carga_semanal=carga_semanal,
+        carga_disciplinas=carga_disciplinas,
+        prioridades=prioridades,
         total_atividades=total_atividades,
         pendentes=pendentes,
         concluidas=concluidas,
@@ -242,7 +432,50 @@ def editar(id):
 
                 return redirect(url_for("inicio"))
 
+        # Busca os prazos de todas as atividades ainda pendentes.
+        prazos_pendentes = conexao.execute("""
+            SELECT prazo
+            FROM atividades
+            WHERE concluida = 0
+        """).fetchall()
+
     return render_template("editar.html", atividade=atividade)
+
+    # Calcula a carga acadêmica das próximas quatro semanas.
+    hoje = date.today()
+    inicio_semana = hoje - timedelta(days=hoje.weekday())
+
+    carga_semanal = []
+
+    for numero_semana in range(4):
+        inicio = inicio_semana + timedelta(weeks=numero_semana)
+        fim = inicio + timedelta(days=6)
+
+        quantidade = 0
+
+        for registro in prazos_pendentes:
+            prazo = date.fromisoformat(registro["prazo"])
+
+            if hoje <= prazo and inicio <= prazo <= fim:
+                quantidade += 1
+
+        if quantidade >= 7:
+            nivel = "alta"
+            mensagem = "Semana sobrecarregada"
+        elif quantidade >= 4:
+            nivel = "moderada"
+            mensagem = "Semana movimentada"
+        else:
+            nivel = "baixa"
+            mensagem = "Semana tranquila"
+
+        carga_semanal.append({
+            "inicio": max(inicio, hoje).strftime("%d/%m/%Y"),
+            "fim": fim.strftime("%d/%m/%Y"),
+            "quantidade": quantidade,
+            "nivel": nivel,
+            "mensagem": mensagem
+        })
 
 
 @app.route("/concluir/<int:id>", methods=["POST"])
@@ -366,6 +599,47 @@ def calendario_academico():
         mes_proximo=mes_proximo,
         hoje=hoje
     )
+
+
+@app.route("/nota/<int:id>", methods=["POST"])
+def registrar_nota(id):
+    nota_obtida_texto = request.form.get("nota_obtida", "").strip()
+    nota_maxima_texto = request.form.get("nota_maxima", "").strip()
+
+    try:
+        nota_obtida = float(nota_obtida_texto.replace(",", "."))
+        nota_maxima = float(nota_maxima_texto.replace(",", "."))
+
+        if nota_maxima <= 0:
+            raise ValueError
+
+        if nota_obtida < 0 or nota_obtida > nota_maxima:
+            raise ValueError
+
+    except ValueError:
+        return (
+            "Notas inválidas. Informe valores numéricos, "
+            "com nota máxima maior que zero e nota obtida "
+            "entre zero e a nota máxima.",
+            400
+        )
+
+    with conectar_banco() as conexao:
+        atividade = conexao.execute(
+            "SELECT id FROM atividades WHERE id = ?",
+            (id,)
+        ).fetchone()
+
+        if atividade is None:
+            return "Atividade não encontrada.", 404
+
+        conexao.execute("""
+            UPDATE atividades
+            SET nota_obtida = ?, nota_maxima = ?
+            WHERE id = ?
+        """, (nota_obtida, nota_maxima, id))
+
+    return redirect(url_for("inicio"))
 
 
 if __name__ == "__main__":
