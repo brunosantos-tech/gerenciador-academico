@@ -86,6 +86,16 @@
             </div>
         </section>
 
+        
+        <section class="secao-grafico">
+            <h2>Desempenho por disciplina</h2>
+            <p>Compare as atividades concluídas e pendentes em cada matéria.</p>
+
+            <div class="container-grafico">
+                <canvas id="graficoDisciplinas"></canvas>
+            </div>
+        </section>
+
 
         <section class="formulario">
             <h2>Nova atividade</h2>
@@ -329,5 +339,51 @@
     });
 </script>
 </body>
+
+<script>
+    const desempenhoDisciplinas = {{ desempenho_disciplinas | tojson }};
+
+    const elementoDisciplinas = document.getElementById("graficoDisciplinas");
+
+    new Chart(elementoDisciplinas, {
+        type: "bar",
+
+        data: {
+            labels: desempenhoDisciplinas.map(item => item.disciplina),
+
+            datasets: [
+                {
+                    label: "Concluídas",
+                    data: desempenhoDisciplinas.map(item => item.concluidas),
+                    backgroundColor: "#16a34a"
+                },
+                {
+                    label: "Pendentes",
+                    data: desempenhoDisciplinas.map(item => item.pendentes),
+                    backgroundColor: "#2563eb"
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+</script>
+</body>
 </html>
+
 

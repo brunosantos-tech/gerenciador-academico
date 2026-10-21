@@ -106,6 +106,19 @@ def inicio():
             ORDER BY disciplina ASC
         """).fetchall()
 
+
+        desempenho_disciplinas = conexao.execute("""
+            SELECT
+                disciplina,
+                COUNT(*) AS total,
+                SUM(CASE WHEN concluida = 1 THEN 1 ELSE 0 END) AS concluidas,
+                SUM(CASE WHEN concluida = 0 THEN 1 ELSE 0 END) AS pendentes
+            FROM atividades
+            GROUP BY disciplina
+            ORDER BY disciplina ASC
+        """).fetchall()
+
+
         total_atividades = conexao.execute(
             "SELECT COUNT(*) FROM atividades"
         ).fetchone()[0]
@@ -182,6 +195,7 @@ def inicio():
         atrasadas=atrasadas,
         proximas=proximas,
         disciplinas=disciplinas,
+        desempenho_disciplinas=desempenho_disciplinas,
         situacao=situacao,
         disciplina_filtro=disciplina_filtro,
         busca=busca,
