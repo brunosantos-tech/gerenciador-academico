@@ -118,6 +118,9 @@ def inicio():
             ORDER BY disciplina ASC
         """).fetchall()
 
+        desempenho_disciplinas = [
+            dict(item) for item in desempenho_disciplinas
+        ]
 
         total_atividades = conexao.execute(
             "SELECT COUNT(*) FROM atividades"
@@ -200,12 +203,13 @@ def inicio():
         disciplina_filtro=disciplina_filtro,
         busca=busca,
         ordenacao=ordenacao,
-        prazo_predefinido=request.args.get("prazo", ""),
+        prazo_predefinido=request.args.get("prazo", ""),        
         dados_grafico={
-            "concluídas": concluidas,
+            "concluidas": concluidas,
             "pendentes": pendentes - atrasadas,
             "atrasadas": atrasadas
         }
+
     )
 
 

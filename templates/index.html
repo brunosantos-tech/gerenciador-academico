@@ -86,6 +86,51 @@
             </div>
         </section>
 
+
+        <section class="secao-grafico">
+            <h2>Carga de trabalho por disciplina</h2>
+            <p>Veja onde você tem mais atividades pendentes.</p>
+
+            <div class="lista-carga">
+                {% for item in desempenho_disciplinas %}
+                    {% set percentual = (item['pendentes'] / item['total'] * 100) | round | int if item['total'] > 0 else 0 %}
+
+                    <article class="item-carga">
+                        <div class="item-carga-cabecalho">
+                            <strong>{{ item['disciplina'] }}</strong>
+                            <span>
+                                {{ item['pendentes'] }} pendente(s) de {{ item['total'] }}
+                            </span>
+                        </div>
+
+                        <div
+                            class="barra-carga"
+                            role="progressbar"
+                            aria-label="Percentual de atividades pendentes em {{ item['disciplina'] }}"
+                            aria-valuenow="{{ percentual }}"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                        >
+                            <div
+                                class="barra-carga-preenchimento"
+                                style="width: {{ percentual }}%;"
+                            ></div>
+                        </div>
+
+                        {% if item['pendentes'] == 0 %}
+                            <small class="carga-baixa">Todas as atividades concluídas!</small>
+                        {% elif item['pendentes'] >= 3 %}
+                            <small class="carga-alta">Atenção: várias atividades pendentes.</small>
+                        {% else %}
+                            <small class="carga-moderada">Continue avançando nesta disciplina.</small>
+                        {% endif %}
+                    </article>
+                {% else %}
+                    <p>Nenhuma disciplina cadastrada ainda.</p>
+                {% endfor %}
+            </div>
+        </section>
+
         
         <section class="secao-grafico">
             <h2>Desempenho por disciplina</h2>

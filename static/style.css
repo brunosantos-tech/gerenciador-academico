@@ -560,3 +560,61 @@ button:hover {
     margin: 0 auto;
 }
 
+
+.lista-carga {
+    display: grid;
+    gap: 20px;
+}
+
+.item-carga {
+    padding: 16px;
+    background-color: #f9fafb;
+    border-radius: 10px;
+}
+
+.item-carga-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.item-carga-cabecalho span {
+    color: #4b5563;
+    font-size: 0.9rem;
+}
+
+.barra-carga {
+    height: 10px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #e5e7eb;
+    border-radius: 999px;
+}
+
+.barra-carga-preenchimento {
+    height: 100%;
+    background-color: #ea580c;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.item-carga small {
+    display: block;
+    margin-top: 8px;
+}
+
+.carga-baixa {
+    color: #15803d;
+}
+
+.carga-moderada {
+    color: #1d4ed8;
+}
+
+.carga-alta {
+    color: #c2410c;
+}
+
